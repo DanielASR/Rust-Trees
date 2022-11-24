@@ -1,4 +1,4 @@
-use AvlTree::avltree::AvlTree;
+use avltree::avltree::AvlTree;
 fn main() {
     //all condition
     let mut tree3 = AvlTree::new();
@@ -13,7 +13,6 @@ fn main() {
     //delete node has both right and left
     let max_node = tree3.max();
     println!("{:?}",max_node);
-    /* 
     tree3.delete(13);
     //delete node has no child
     tree3.delete(11);
@@ -22,5 +21,5 @@ fn main() {
     //delete node has left
     tree3.delete(61);
     println!("{:#?}",tree3);
-    dbg!(&tree3);*/
+    dbg!(&tree3);
 }
