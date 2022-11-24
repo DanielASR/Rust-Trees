@@ -61,6 +61,7 @@ where T: Ord+Display+Debug+Clone+Copy{
     fn rotate_left(&self,tree_node:Tree<T>) -> Tree<T>;
     fn rotate_right(&self,tree_node:Tree<T>) ->Tree<T>;
     fn find_min(&self,tree_node:Tree<T>) -> Tree<T>;
+    fn find_max(&self, tree: Tree<T>) -> Tree<T>;
 }
 
 impl <T> _Tree<T> for Tree<T>
@@ -276,6 +277,21 @@ where T: Ord+Display+Debug+Clone+Copy{
         }
     }
 
+    fn find_max(&self, tree: Tree<T>) -> Tree<T> {
+        match tree {
+            Some(sub_tree) => {
+                let mut right = Some(sub_tree.clone());
+                while right.as_ref().unwrap().borrow().right.clone().is_some() {
+                    right = right.unwrap().borrow().right.clone();
+                }
+                right
+            },
+            None => {
+                tree
+            }
+        }
+    }
+
     fn balance_tree(&self, tree_node:Tree<T>) -> Tree<T>{
         let balance_factor = self.balance_factor(tree_node.clone());
         let balanced_tree :Tree<T>;
@@ -415,7 +431,15 @@ where T: Ord+Display+Debug+Clone+Copy{
         let dummy = Node::<T>::new(key).unwrap().borrow().clone();
         self.search_node(&self.root, &dummy)
     }
+    
+    pub fn min(&self) -> Tree<T> {
+        self.root.find_min(self.root.clone())
+    }
 
+    pub fn max(&self) -> Tree<T> {
+        self.root.find_max(self.root.clone())
+    }
+    
     fn search_node(&self, tree_node: &Tree<T>, node: &Node<T>) -> Tree<T> {
         match tree_node {
             Some(sub_tree) => {

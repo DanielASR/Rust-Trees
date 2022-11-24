@@ -1,2 +1,2 @@
 #![crate_type = "lib"]
-pub mod AvlTree;
+pub mod avltree;
