@@ -7,8 +7,8 @@ fn bench_rbtree(tree_size: i32){
     for i in 0..tree_size{
         t.insert(i);
     }
-    let temp = 10/tree_size;
-    for i in 0..temp{
+    let lowest = tree_size/10;
+    for i in 0..lowest{
         t.search(i);
     }
 
@@ -18,7 +18,7 @@ fn criterion_benchmark_rbtree(c: &mut Criterion) {
     //c.bench_function("RBTree", |b| b.iter(|| bench_trees(black_box(20))));
     
     let mut test_group = c.benchmark_group("RBTree");
-    for size in [100, 1000, 10000, 100000].iter() {
+    for size in [10000, 40000, 70000, 100000, 130000].iter() {
         test_group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
             b.iter(|| {
                 bench_rbtree(size);
@@ -35,8 +35,8 @@ fn bench_avltree(tree_size: i32){
     for i in 0..tree_size{
         t.insert(i);
     }
-    let temp = 10/tree_size;
-    for i in 0..temp{
+    let lowest = tree_size/10;
+    for i in 0..lowest{
         t.search(i);
     }
 
@@ -46,7 +46,7 @@ fn criterion_benchmark_avltree(c: &mut Criterion) {
     //c.bench_function("AvlTree", |b| b.iter(|| bench_trees(black_box(20))));
     
     let mut test_group = c.benchmark_group("AvlTree");
-    for size in [100, 1000, 10000, 100000].iter() {
+    for size in [10000, 40000, 70000, 100000, 130000].iter() {
         test_group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
             b.iter(|| {
                 bench_avltree(size);
