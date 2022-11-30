@@ -325,6 +325,10 @@ where T: Ord+Display+Debug+Clone+Copy{
         AvlTree { root: None ,count: 0}
     }
 
+    pub fn count(&self) -> usize {
+        return self.count;
+    }
+
     pub fn is_empty(&self) -> bool{
         if self.root.is_none(){
             return true;
