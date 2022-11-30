@@ -73,6 +73,10 @@ where T: Ord+Display+Debug+Clone+Copy
         }
     }
 
+    pub fn count(&self) -> u32 {
+        self.count
+    }
+
     // 6- check if tree is empty
     pub fn is_empty(&self) -> bool {
         if self.root.is_none() {
