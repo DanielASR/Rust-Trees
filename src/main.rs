@@ -181,7 +181,7 @@ fn run_avltree() {
                 // height function needs to be public
                 println!(" ");
                 println!("PRINT OUTPUT ----------------------------------------------- ");
-                //println!("The height of the tree is {}", tree.height());
+                println!("The height of the tree is {}", tree.height());
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },

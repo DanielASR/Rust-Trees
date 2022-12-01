@@ -338,6 +338,10 @@ where T: Ord+Display+Debug+Clone+Copy{
         }
     }
 
+    pub fn height(&self) -> i8{
+        self.root.height(self.root.clone())
+    }
+
     pub fn leaves(&self) -> u32 {
         if self.root.is_none() {
             return 0;
