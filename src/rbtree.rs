@@ -714,20 +714,9 @@ where T: Ord+Display+Debug+Clone+Copy
             println!("None");
             return;
         };
-        let root = self.root.as_ref().unwrap().clone();
-        let mut queue: VecDeque<Tree<T>> = VecDeque::new();
-        queue.push_back(Some(root));
-        while !queue.is_empty() {
-            let n = queue.len();
-            for _ in 0..n {
-                let node = queue.pop_front().unwrap().unwrap();
-                print!(" {} ", node.borrow().key.clone());
-                for child in [node.borrow().left.clone(), node.borrow().right.clone()] {
-                    if child.is_some() {
-                        queue.push_back(child);
-                    }
-                }
-            }
+        let inorder_nodes = self.inorder();
+        for node in inorder_nodes {
+            print!(" {} ", node.unwrap().borrow().key.clone());
         }
         println!("\n");
     }
@@ -738,6 +727,63 @@ where T: Ord+Display+Debug+Clone+Copy
 
     pub fn max(&self) -> Tree<T> {
         self.find_max(self.root.clone())
+    }
+
+    fn inorder(&self) -> VecDeque<Tree<T>> {
+        let root = self.root.as_ref().unwrap().clone();
+        let mut queue: VecDeque<Tree<T>> = VecDeque::new();
+        queue.push_back(Some(root));
+        let mut res: VecDeque<Tree<T>> = VecDeque::new();
+        while !queue.is_empty() {
+            let n = queue.len();
+            for _ in 0..n {
+                let node = queue.pop_front().unwrap().unwrap();
+                res.push_back(Some(node.clone()));
+                for child in [node.borrow().left.clone(), node.borrow().right.clone()] {
+                    if child.is_some() {
+                        queue.push_back(child);
+                    }
+                }
+            }
+        }
+        res
+    }
+
+    pub fn print_tree(&self) {
+        if self.root.is_none() {
+            println!("None");
+            return;
+        };
+
+        fn pretty_print<T: Ord+Display+Debug+Clone>(node: TreeNode<T>, buffer: &mut String, prefix: &mut String, child_prefix: &String) {
+            let node_color = if node.borrow().clone().color == NodeColor::Black { "(b)" }else {"(r)"};
+            prefix.push_str(&node_color.to_string());
+            buffer.push_str(&prefix);
+            buffer.push_str(&node.borrow().clone().key.to_string());
+            buffer.push_str(&"\n".to_string());
+            for child in [node.borrow().clone().right.clone(), node.borrow().clone().left.clone()] {
+                if child.is_some() {
+                    if child.as_ref().unwrap().borrow().clone().left.is_some() || child.as_ref().unwrap().borrow().clone().right.is_some() {
+                        let mut new_prefix = child_prefix.clone();
+                        let mut new_child_prefix = child_prefix.clone();
+                        new_prefix.push_str(&"├── ");
+                        new_child_prefix.push_str(&"│   ");
+                        pretty_print(child.as_ref().unwrap().clone(), buffer, &mut new_prefix, &new_child_prefix);
+                    } else {
+                        let mut new_prefix = child_prefix.clone();
+                        let mut new_child_prefix = child_prefix.clone();
+                        new_prefix.push_str(&"└── ");
+                        new_child_prefix.push_str(&"    ");
+                        pretty_print(child.as_ref().unwrap().clone(), buffer, &mut new_prefix, &new_child_prefix);
+                    }
+                }
+            }
+        }
+
+        let node = self.root.as_ref().unwrap().clone();
+        let mut buffer = String::new();
+        pretty_print(node, &mut buffer, &mut "".to_string(), &"".to_string());
+        println!("{}", buffer);
     }
 }
 

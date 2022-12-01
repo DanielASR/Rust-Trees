@@ -85,7 +85,8 @@ fn run_rbtree() {
                 // print the tree
                 println!(" ");
                 println!("PRINT OUTPUT ----------------------------------------------- ");
-                println!("{:#?}",tree);
+                //println!("{:#?}",tree);
+                tree.print_tree();
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },
