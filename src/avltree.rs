@@ -465,6 +465,40 @@ where T: Ord+Display+Debug+Clone+Copy{
             None => {None}
         }
     }
+    pub fn print_tree(&self) {
+        if self.root.is_none() {
+            println!("None");
+            return;
+        };
+
+        fn pretty_print<T: Ord+Display+Debug+Clone>(node: TreeNode<T>, buffer: &mut String, prefix: &mut String, child_prefix: &String) {
+            buffer.push_str(&prefix);
+            buffer.push_str(&node.borrow().clone().key.to_string());
+            buffer.push_str(&"\n".to_string());
+            for child in [node.borrow().clone().right.clone(), node.borrow().clone().left.clone()] {
+                if child.is_some() {
+                    if child.as_ref().unwrap().borrow().clone().left.is_some() || child.as_ref().unwrap().borrow().clone().right.is_some() {
+                        let mut new_prefix = child_prefix.clone();
+                        let mut new_child_prefix = child_prefix.clone();
+                        new_prefix.push_str(&"├── ");
+                        new_child_prefix.push_str(&"│   ");
+                        pretty_print(child.as_ref().unwrap().clone(), buffer, &mut new_prefix, &new_child_prefix);
+                    } else {
+                        let mut new_prefix = child_prefix.clone();
+                        let mut new_child_prefix = child_prefix.clone();
+                        new_prefix.push_str(&"└── ");
+                        new_child_prefix.push_str(&"    ");
+                        pretty_print(child.as_ref().unwrap().clone(), buffer, &mut new_prefix, &new_child_prefix);
+                    }
+                }
+            }
+        }
+
+        let node = self.root.as_ref().unwrap().clone();
+        let mut buffer = String::new();
+        pretty_print(node, &mut buffer, &mut "".to_string(), &"".to_string());
+        println!("{}", buffer);
+    }   
 }
 
 impl<T> fmt::Display for AvlTree<T>
@@ -475,4 +509,602 @@ where T: Debug+Ord+Display+Copy
          .field("root", &self.root)
          .finish()
     }
+}
+
+#[test]
+pub fn create_empty_avltree() {
+    // type T must be specified if theres no other node insertions
+    let avltree: AvlTree<u32> = AvlTree::new();
+    assert!(avltree.root.is_none());
+}
+
+#[test]
+pub fn insert_into_avltree_1() {
+    let mut x = AvlTree::new();
+    assert_eq!(0,x.count);
+    x.insert(3);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key, 3);
+    assert_eq!(x.count,1);
+    assert_eq!(x.height(),1);
+    x.insert(2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key, 2);
+    assert_eq!(x.count, 2);
+    assert_eq!(x.height(),2);
+}
+
+#[test]
+pub fn insert_into_avltree_2() {
+    //  ll rotation
+    let mut x = AvlTree::new();
+    assert_eq!(0,x.count);
+    x.insert(3);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key, 3);
+    assert_eq!(x.count,1);
+    assert_eq!(x.height(),1);
+    x.insert(2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key, 2);
+    assert_eq!(x.count, 2);
+    assert_eq!(x.height(),2);
+    x.insert(1);
+    assert_eq!(x.height(),2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key,1);
+    assert_eq!(x.root.as_ref().unwrap().borrow().right.as_ref().unwrap().borrow().key,3);
+    assert_eq!(x.count, 3);
+}
+
+#[test]
+pub fn insert_into_rbtree_3() {
+    // lr rotation
+    let mut x = AvlTree::new();
+    assert_eq!(0,x.count);
+    x.insert(4);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key, 4);
+    assert_eq!(x.count,1);
+    assert_eq!(x.height(),1);
+    x.insert(2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key, 2);
+    assert_eq!(x.count, 2);
+    assert_eq!(x.height(),2);
+    x.insert(3);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,3);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key,2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().right.as_ref().unwrap().borrow().key,4);
+    assert_eq!(x.count, 3);
+    assert_eq!(x.height(),2);
+}
+
+#[test]
+pub fn insert_into_rbtree_4() {
+    // rr rotaion
+    let mut x = AvlTree::new();
+    assert_eq!(0,x.count);
+    x.insert(4);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key, 4);
+    assert_eq!(x.count,1);
+    assert_eq!(x.height(),1);
+    x.insert(5);
+    assert_eq!(x.root.as_ref().unwrap().borrow().right.as_ref().unwrap().borrow().key, 5);
+    assert_eq!(x.count, 2);
+    assert_eq!(x.height(),2);
+    x.insert(6);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,5);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key,4);
+    assert_eq!(x.root.as_ref().unwrap().borrow().right.as_ref().unwrap().borrow().key,6);
+    assert_eq!(x.count, 3);
+    assert_eq!(x.height(),2);
+}
+
+#[test]
+pub fn insert_into_rbtree_5() {
+    // rl rotation
+    let mut x = AvlTree::new();
+    assert_eq!(0,x.count);
+    x.insert(4);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key, 4);
+    assert_eq!(x.count,1);
+    assert_eq!(x.height(),1);
+    x.insert(6);
+    assert_eq!(x.root.as_ref().unwrap().borrow().right.as_ref().unwrap().borrow().key, 6);
+    assert_eq!(x.count, 2);
+    assert_eq!(x.height(),2);
+    x.insert(5);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,5);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key,4);
+    assert_eq!(x.root.as_ref().unwrap().borrow().right.as_ref().unwrap().borrow().key,6);
+    assert_eq!(x.count, 3);
+    assert_eq!(x.height(),2);
+}
+ 
+#[test]
+pub fn search_1() {
+    let mut x = AvlTree::new();
+    x.insert(9);
+    x.insert(8);
+    x.insert(12);
+    x.insert(3);
+
+    let y = x.search(8);
+    assert_eq!(8,y.as_ref().unwrap().borrow().clone().key);
+    let z = x.search(81);
+    assert!(z.is_none());
+}
+
+#[test]
+pub fn test_delete_1() {
+    let mut x = AvlTree::new();
+    x.insert(12);
+    x.insert(8);
+    x.insert(15);
+    assert_eq!(x.height(),2);
+    x.delete(12);
+    assert_eq!(x.height(),2);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,15);
+    assert_eq!(x.root.as_ref().unwrap().borrow().left.as_ref().unwrap().borrow().key,8);
+}
+
+#[test]
+pub fn insert_test_1() {
+    let mut x = AvlTree::new();
+    x.insert(15);
+    x.insert(11);
+    x.insert(19);
+    x.insert(8);
+    x.insert(13);
+    x.insert(16);
+    x.insert(23);
+    x.insert(12);
+    x.insert(14);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,15);
+    assert_eq!(x.height(),4);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,19);
+    assert_eq!(x_right.height(x_right.clone()),2);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,11);
+    assert_eq!(x_left.height(x_left.clone()),3);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,23);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,16);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,8);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,13);
+
+    let x_left_right_right = x_left_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right_right.as_ref().unwrap().borrow().key,14);
+    let x_left_right_left = x_left_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_right_left.as_ref().unwrap().borrow().key,12);
+}
+
+#[test]
+pub fn delete_test_1() {
+    let mut x = AvlTree::new();
+    x.insert(15);
+    x.insert(11);
+    x.insert(19);
+    x.insert(8);
+    x.insert(13);
+    x.insert(16);
+    x.insert(23);
+    x.insert(12);
+    x.insert(14);
+    x.delete(13);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,15);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,19);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,11);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,23);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,16);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,8);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,14);
+
+    let x_left_right_left = x_left_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_right_left.as_ref().unwrap().borrow().key,12);
+}
+
+#[test]
+pub fn insert_test_2() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(30);
+    x.insert(2);
+    x.insert(9);
+    x.insert(25);
+    x.insert(40);
+    x.insert(38);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,30);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,40);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,25);
+
+    let x_right_right_left = x_right_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_right_left.as_ref().unwrap().borrow().key,38);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,2);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,9);
+}
+
+#[test]
+pub fn delete_test_2() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(30);
+    x.insert(2);
+    x.insert(9);
+    x.insert(25);
+    x.insert(40);
+    x.insert(38);
+    x.delete(30);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,38);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,40);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,25);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,2);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,9);
+}
+
+#[test]
+pub fn insert_test_3() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(20);
+    x.insert(15);
+    x.insert(30);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,20);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,15);
+}
+
+#[test]
+pub fn delete_test_3() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(20);
+    x.insert(15);
+    x.insert(30);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+    
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,20);
+ 
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+    
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+}
+
+#[test]
+pub fn insert_test_4() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(20);
+    x.insert(1);
+    x.insert(7);
+    x.insert(15);
+    x.insert(30);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+    
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,20);
+
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,15);
+
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,1);
+
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,7);
+
+}
+
+#[test]
+pub fn delete_test_4() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(20);
+    x.insert(1);
+    x.insert(7);
+    x.insert(15);
+    x.insert(30);
+    x.delete(15);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,20);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,1);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,7);
+}
+
+#[test]
+pub fn insert_test_5() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(20);
+    x.insert(1);
+    x.insert(7);
+    x.insert(15);
+    x.insert(30);
+    x.insert(25);
+    x.insert(40);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,20);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,15);
+
+    let x_right_right_left = x_right_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_right_left.as_ref().unwrap().borrow().key,25);
+
+    let x_right_right_right = x_right_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right_right.as_ref().unwrap().borrow().key,40);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,1);
+
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,7);
+
+}
+
+#[test]
+pub fn delete_test_5() {
+    let mut x = AvlTree::new();
+    x.insert(10);
+    x.insert(5);
+    x.insert(20);
+    x.insert(1);
+    x.insert(7);
+    x.insert(15);
+    x.insert(30);
+    x.insert(25);
+    x.insert(40);
+    x.delete(15);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,30);
+
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,40);
+
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,20);
+
+
+    let x_right_left_right = x_right_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_left_right.as_ref().unwrap().borrow().key,25);
+
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,1);
+
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,7);
+}
+
+#[test]
+pub fn insert_test_6() {
+    let mut x = AvlTree::new();
+    x.insert(1);
+    x.insert(5);
+    x.insert(7);
+    x.insert(10);
+    x.insert(20);
+    x.insert(25);
+    x.insert(28);
+    x.insert(30);
+    x.insert(40);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,25);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,20);
+
+    let x_right_right_left = x_right_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_right_left.as_ref().unwrap().borrow().key,28);
+
+    let x_right_right_right = x_right_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right_right.as_ref().unwrap().borrow().key,40);
+
+    let x_left_left = x_left.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left_left.as_ref().unwrap().borrow().key,1);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,7);
+}
+
+#[test]
+pub fn delete_test_6() {
+    let mut x = AvlTree::new();
+    x.insert(1);
+    x.insert(5);
+    x.insert(7);
+    x.insert(10);
+    x.insert(20);
+    x.insert(25);
+    x.insert(28);
+    x.insert(30);
+    x.insert(40);
+    x.delete(1);
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,10);
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,25);
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,5);
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key,30);
+
+    let x_right_left = x_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_left.as_ref().unwrap().borrow().key,20);
+
+    let x_right_right_left = x_right_right.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_right_right_left.as_ref().unwrap().borrow().key,28);
+
+    let x_right_right_right = x_right_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right_right.as_ref().unwrap().borrow().key,40);
+
+    let x_left_right = x_left.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_left_right.as_ref().unwrap().borrow().key,7);
+}
+
+#[test]
+pub fn test_letters() {
+    let mut x = AvlTree::new();
+    x.insert("a");
+    x.insert("b");
+    x.insert("c");
+    x.insert("p");
+    x.insert("m");
+    x.delete("c");
+
+    assert_eq!(x.root.as_ref().unwrap().borrow().key,"b");
+
+    let x_right = x.root.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right.as_ref().unwrap().borrow().key,"m");
+
+    let x_left = x.root.as_ref().unwrap().borrow().clone().left.clone();
+    assert_eq!(x_left.as_ref().unwrap().borrow().key,"a");
+
+    let x_right_right = x_right.as_ref().unwrap().borrow().clone().right.clone();
+    assert_eq!(x_right_right.as_ref().unwrap().borrow().key, "p");
+}
+
+#[test]
+pub fn test_min_max_1() {
+    let mut a = AvlTree::new();
+    a.insert(455);
+    a.insert(32);
+    a.insert(4);
+    a.insert(9);
+    a.insert(12);
+    a.insert(1);
+    assert_eq!(a.min().as_ref().unwrap().borrow().key, 1);
+    assert_eq!(a.max().as_ref().unwrap().borrow().key, 455);
+}
+
+#[test]
+pub fn test_min_max_2() {
+    let mut a = AvlTree::new();
+    a.insert("a");
+    a.insert("f");
+    a.insert("d");
+    a.insert("g");
+    a.insert("u");
+    a.insert("c");
+    assert_eq!(a.min().as_ref().unwrap().borrow().key, "a");
+    assert_eq!(a.max().as_ref().unwrap().borrow().key, "u");
 }

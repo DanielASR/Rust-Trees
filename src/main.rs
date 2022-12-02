@@ -206,7 +206,7 @@ fn run_avltree() {
                 // print the tree
                 println!(" ");
                 println!("PRINT OUTPUT ----------------------------------------------- ");
-                println!("{:#?}",tree);
+                tree.print_tree();
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },
