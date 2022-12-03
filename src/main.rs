@@ -7,7 +7,7 @@ use std::io;
 #[allow(non_snake_case)]
 
 fn main() {
-    /*let args: Vec<String> = env::args().collect();
+    let args: Vec<String> = env::args().collect();
     let choice = args.get(1);
     match choice {
         Some(n) => {
@@ -22,17 +22,7 @@ fn main() {
             }
         },
         None => {println!("Invalid input. Please select either rb or avl (Ex. cargo run rb or cargon run avl).");}
-    }*/
-
-    let mut tree: BST<u32> = BST::<u32>::new();
-    tree.insert(4);
-    tree.insert(5);
-    tree.insert(6);
-    println!("{:#?}", tree);
-
-
-
-
+    }
 }
 
 fn run_rbtree() {

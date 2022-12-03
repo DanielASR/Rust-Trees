@@ -22,6 +22,7 @@ where T: Debug+Ord+Display+Copy{
     }
 }
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct BST<T:Ord + Display + Debug + Copy>{
     root : Tree<T>,
 
@@ -38,8 +39,6 @@ where T: Debug+Ord+Display+Copy
          .finish()
     }
 }
-
-#[derive(Clone, Debug, PartialEq)]
 
 trait _Tree<T>
 where T: Ord+Display+Debug+Clone+Copy{
