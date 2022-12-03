@@ -93,11 +93,7 @@ where T: Ord+Display+Debug+Clone+Copy{
             Some(node) =>{
                 let left_height = self.height(node.borrow().clone().left.clone());
                 let right_height = self.height(node.borrow().clone().right.clone());
-                if left_height >= right_height {
-                    (left_height - right_height) as i8
-                } else {
-                    -((right_height - left_height) as i8)
-                }
+                left_height - right_height
             }
             None => 0
         }
