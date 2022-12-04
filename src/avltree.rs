@@ -386,10 +386,11 @@ where T: Ord+Display+Debug+Clone+Copy{
                 root = p.clone();
             } else {
                 let pop = stack.pop().unwrap();
-                println!("{:?}", pop.as_ref().unwrap().borrow().key.clone());
+                print!(" {} ", pop.as_ref().unwrap().borrow().key.clone());
                 root = pop.as_ref().unwrap().borrow().right.clone();
             }
         }
+        println!("\n");
     }
 
     pub fn print_preorder(&self) {
@@ -404,7 +405,7 @@ where T: Ord+Display+Debug+Clone+Copy{
         while !stack.is_empty() {
             cur = stack.pop().unwrap();
             root = cur.clone();
-            println!("{:?}", root.as_ref().unwrap().borrow().key.clone());
+            print!(" {} ", root.as_ref().unwrap().borrow().key.clone());
             let root_right = root.as_ref().unwrap().borrow().right.clone();
             let root_left = root.as_ref().unwrap().borrow().left.clone();
             if root_right.is_some() {
@@ -414,6 +415,7 @@ where T: Ord+Display+Debug+Clone+Copy{
                 stack.push(root_left.clone());
             }
         }
+        println!("\n");
     }
 
     pub fn insert(&mut self,key:T){

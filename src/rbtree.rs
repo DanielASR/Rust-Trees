@@ -661,7 +661,7 @@ where T: Ord+Display+Debug+Clone+Copy
             }
             height += 1;
         }
-        height-1
+        height
     }
 
     // 5- print in-order traversal of tree
