@@ -1,6 +1,5 @@
 use Rust_Trees::rbtree::RBTree;
 use Rust_Trees::avltree::AvlTree;
-use Rust_Trees::bst::BST;
 use std::env;
 use std::io;
 
@@ -138,6 +137,14 @@ fn run_rbtree() {
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },
+            14 => {
+                // debug print
+                println!(" ");
+                println!("PRINT OUTPUT ----------------------------------------------- ");
+                println!("{:#?}", tree);
+                println!("------------------------------------------------------ ");
+                println!(" ");
+            },
             _ => {break;}
         }
     };
@@ -258,6 +265,14 @@ fn run_avltree() {
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },
+            14 => {
+                // debug print
+                println!(" ");
+                println!("PRINT OUTPUT ----------------------------------------------- ");
+                println!("{:#?}", tree);
+                println!("------------------------------------------------------ ");
+                println!(" ");
+            },
             _ => {break;}
         }
     };
@@ -279,6 +294,7 @@ fn print_options() {
     println!("11 to find maximum of tree");
     println!("12 to print pre-order traversal");
     println!("13 to print level-order traversal");
+    println!("14 to debug print");
     println!(" ");
 }
 
