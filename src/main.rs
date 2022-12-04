@@ -4,8 +4,6 @@ use Rust_Trees::bst::BST;
 use std::env;
 use std::io;
 
-#[allow(non_snake_case)]
-
 fn main() {
     let args: Vec<String> = env::args().collect();
     let choice = args.get(1);

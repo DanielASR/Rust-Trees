@@ -6,6 +6,8 @@ use std::fmt::Display;
 use std::fmt;
 use std::collections::VecDeque;
 
+#[allow(non_snake_case)]
+
 #[derive(Clone, Debug, PartialEq)]
 enum NodeColor {
     Red,

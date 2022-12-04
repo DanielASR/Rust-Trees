@@ -5,7 +5,7 @@ use std::fmt::Display;
 use std::fmt;
 use std::cmp::max;
 
-
+#[allow(non_snake_case)]
 
 type TreeNode<T> = Rc<RefCell<Node<T>>>;
 type Tree<T> = Option<TreeNode<T>>;
