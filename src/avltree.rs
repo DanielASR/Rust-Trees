@@ -470,6 +470,8 @@ where T: Ord+Display+Debug+Clone+Copy{
         };
 
         fn pretty_print<T: Ord+Display+Debug+Clone>(node: TreeNode<T>, buffer: &mut String, prefix: &mut String, child_prefix: &String) {
+            let node_height = node.borrow().clone().height;
+            prefix.push_str(&("(".to_string() + &node_height.to_string() + &")".to_string()));
             buffer.push_str(&prefix);
             buffer.push_str(&node.borrow().clone().key.to_string());
             buffer.push_str(&"\n".to_string());
