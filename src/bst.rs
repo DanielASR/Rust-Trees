@@ -3,7 +3,6 @@ use std::rc::Rc;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::fmt;
-use std::cmp::max;
 
 type TreeNode<T> = Rc<RefCell<Node<T>>>;
 type Tree<T> = Option<TreeNode<T>>;
@@ -60,8 +59,6 @@ where T: Ord+Display+Debug+Clone+Copy{
             }
             Some(root) => {
                 let clone_node = root.borrow().clone();
-                let balanced_tree :Tree<T>;
-                let updated_tree:Tree<T>;
                 let sub_node:Tree<T>;
                 if key == clone_node.key {
                     Some(root.clone())

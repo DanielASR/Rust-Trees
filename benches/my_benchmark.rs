@@ -7,113 +7,186 @@ use Rust_Trees::bst::BST;
 
 
 
-fn bench_rbtree(tree_size: i32){
+fn bench_rbtree_insert(tree_size: u32)->RBTree<u32>{
     let mut t = RBTree::new();
+
     for i in 0..tree_size{
         t.insert(i);
     }
+    t
+}
+
+fn bench_rbtree_search(tree_size: u32,tree:RBTree<u32>){
     let lowest = tree_size/10;
     for i in 0..lowest{
-        t.search(i);
+        tree.search(i);
     }
-
 }
 
-fn criterion_benchmark_rbtree(c: &mut Criterion) {
-    //c.bench_function("RBTree", |b| b.iter(|| bench_trees(black_box(20))));
-    
-    let mut test_group = c.benchmark_group("RBTree");
-
-    // Configuring Sample Count & Other Statistical Settings
-    
-    // test_group.significance_level(0.1).sample_size(10);
-    test_group.sampling_mode(SamplingMode::Flat);
-    test_group.measurement_time(Duration::from_secs(15));
-
-    for size in [10000, 40000, 70000, 100000, 130000].iter() {
-        test_group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
-            b.iter(|| {
-                bench_rbtree(size);
-            }
-            )
-        },
-        );
-    }
-    test_group.finish();
+fn criterion_benchmark_rbtree_insert(c: &mut Criterion) {
+    let mut group = c.benchmark_group("RB Group");
+    group.measurement_time(Duration::from_secs(13));
+    group.bench_function("insert 10000 elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_insert(black_box(10000)))
+    });
+    group.bench_function("insert 40000 elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_insert(black_box(40000)))
+    });
+    group.bench_function("insert 70000 elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_insert(black_box(70000)))
+    });
+    group.bench_function("insert 100000 elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_insert(black_box(100000)))
+    });
+    group.bench_function("insert 130000 elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_insert(black_box(130000)))
+    });
+    group.finish();
 }
 
-fn bench_avltree(tree_size: i32){
+fn criterion_benchmark_rbtree_search(c :&mut Criterion) {
+    let mut tree = bench_rbtree_insert(10000);
+    c.bench_function("search for the 1000 lowest elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_search(black_box(10000),tree.clone()))
+    });
+    tree = bench_rbtree_insert(40000);
+    c.bench_function("4000 lowest elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_search(black_box(40000),tree.clone()))
+    });
+    tree = bench_rbtree_insert(70000);
+    c.bench_function("7000 lowest elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_search(black_box(70000),tree.clone()))
+    });
+    let mut tree = bench_rbtree_insert(100000);
+    c.bench_function("search for the 10000 lowest elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_search(black_box(100000),tree.clone()))
+    });
+    let mut tree = bench_rbtree_insert(130000);
+    c.bench_function("search for the 10000 lowest elements in the Red-Black Tree", |b| {
+        b.iter(|| bench_rbtree_search(black_box(130000),tree.clone()))
+    });
+}
+
+fn bench_avltree_insert(tree_size: u32)->AvlTree<u32>{
     let mut t = AvlTree::new();
     for i in 0..tree_size{
         t.insert(i);
     }
+    t
+}
+
+fn bench_avltree_search(tree_size: u32,tree:AvlTree<u32>){
     let lowest = tree_size/10;
     for i in 0..lowest{
-        t.search(i);
+        tree.search(i);
     }
-
 }
 
-fn criterion_benchmark_avltree(c: &mut Criterion) {
-    //c.bench_function("AvlTree", |b| b.iter(|| bench_trees(black_box(20))));
-    
-    let mut test_group = c.benchmark_group("AvlTree");
 
-    // Configuring Sample Count & Other Statistical Settings
-    
-    //test_group.significance_level(0.1).sample_size(10); 
-    test_group.sampling_mode(SamplingMode::Flat);
-    test_group.measurement_time(Duration::from_secs(15));
-
-    for size in [10000, 40000, 70000, 100000, 130000].iter() {
-        test_group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
-            b.iter(|| {
-                bench_avltree(size);
-            }
-            )
-        },
-        );
-    }
-    test_group.finish();
+fn criterion_benchmark_avltree_insert(c: &mut Criterion) {
+    let mut group = c.benchmark_group("AVL Group");
+    group.measurement_time(Duration::from_secs(13));
+    group.bench_function("insert 10000 elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_insert(black_box(10000)))
+    });
+    group.bench_function("insert 40000 elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_insert(black_box(40000)))
+    });
+    group.bench_function("insert 70000 elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_insert(black_box(70000)))
+    });
+    group.bench_function("insert 100000 elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_insert(black_box(100000)))
+    });
+    group.bench_function("insert 130000 elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_insert(black_box(130000)))
+    });
+    group.finish();
+}
+fn criterion_benchmark_avltree_search(c :&mut Criterion) {
+    let mut tree = bench_avltree_insert(10000);
+    c.bench_function("search for the 1000 lowest elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_search(black_box(10000),tree.clone()))
+    });
+    tree = bench_avltree_insert(40000);
+    c.bench_function("4000 lowest elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_search(black_box(40000),tree.clone()))
+    });
+    tree = bench_avltree_insert(70000);
+    c.bench_function("7000 lowest elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_search(black_box(70000),tree.clone()))
+    });
+    tree = bench_avltree_insert(100000);
+    c.bench_function("search for the 10000 lowest elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_search(black_box(100000),tree.clone()))
+    });
+    tree = bench_avltree_insert(130000);
+    c.bench_function("search for the 10000 lowest elements in the AVL Tree", |b| {
+        b.iter(|| bench_avltree_search(black_box(130000),tree.clone()))
+    });
 }
 
-fn bench_bst(tree_size: i32){
+fn bench_bst_insert(tree_size: u32)->BST<u32>{
     let mut t = BST::new();
     for i in 0..tree_size{
         t.insert(i);
     }
+   t
+}
+
+fn bench_bst_search(tree_size: u32,tree:BST<u32>){
     let lowest = tree_size/10;
     for i in 0..lowest{
-        t.search(i);
+        tree.search(i);
     }
-
 }
+
 
 // This will cause fatal runtime error: stack overflow
 
-fn criterion_benchmark_bst(c: &mut Criterion) {
-    //c.bench_function("BST", |b| b.iter(|| bench_trees(black_box(20))));
-    
-    let mut test_group = c.benchmark_group("BST");
-
-    // Configuring Sample Count & Other Statistical Settings
-    
-    //test_group.significance_level(0.1).sample_size(10); 
-    test_group.sampling_mode(SamplingMode::Flat);
-    test_group.measurement_time(Duration::from_secs(15));
-
-    for size in [10000, 40000, 70000, 100000, 130000].iter() {
-        test_group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
-            b.iter(|| {
-                bench_bst(size);
-            }
-            )
-        },
-        );
-    }
-    test_group.finish();
+fn criterion_benchmark_bst_insert(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Bst Group");
+    group.measurement_time(Duration::from_secs(13));
+    group.bench_function("insert 10000 elements in the BST", |b| {
+        b.iter(|| bench_bst_insert(black_box(10000)))
+    });
+    group.bench_function("insert 40000 elements in the BST", |b| {
+        b.iter(|| bench_bst_insert(black_box(40000)))
+    });
+    group.bench_function("insert 70000 elements in the BST", |b| {
+        b.iter(|| bench_bst_insert(black_box(70000)))
+    });
+    group.bench_function("insert 100000 elements in the BST", |b| {
+        b.iter(|| bench_bst_insert(black_box(100000)))
+    });
+    group.bench_function("insert 130000 elements in the BST", |b| {
+        b.iter(|| bench_bst_insert(black_box(130000)))
+    });
+    group.finish();
 }
 
+fn criterion_benchmark_bst_search(c :&mut Criterion) {
+    let mut tree = bench_bst_insert(10000);
+    c.bench_function("search for the 1000 lowest elements in the BST", |b| {
+        b.iter(|| bench_bst_search(black_box(10000),tree.clone()))
+    });
+    tree = bench_bst_insert(40000);
+    c.bench_function("4000 lowest elements in the BST", |b| {
+        b.iter(|| bench_bst_search(black_box(40000),tree.clone()))
+    });
+    tree = bench_bst_insert(70000);
+    c.bench_function("7000 lowest elements in the BST", |b| {
+        b.iter(|| bench_bst_search(black_box(70000),tree.clone()))
+    });
+    let mut tree = bench_bst_insert(100000);
+    c.bench_function("search for the 10000 lowest elements in the BST", |b| {
+        b.iter(|| bench_bst_search(black_box(100000),tree.clone()))
+    });
+    let mut tree = bench_bst_insert(130000);
+    c.bench_function("search for the 10000 lowest elements in the BST", |b| {
+        b.iter(|| bench_bst_search(black_box(130000),tree.clone()))
+    });
+}
 
-criterion_group!(benches, criterion_benchmark_rbtree, criterion_benchmark_avltree, criterion_benchmark_bst);
+criterion_group!(benches,criterion_benchmark_rbtree_insert, criterion_benchmark_avltree_insert);
 criterion_main!(benches);
