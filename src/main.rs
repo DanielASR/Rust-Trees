@@ -130,10 +130,10 @@ fn run_rbtree() {
                 println!(" ");
             },
             13 => {
-                // in-order traversal
+                // level-order traversal
                 println!(" ");
                 println!("PRINT OUTPUT ----------------------------------------------- ");
-                tree.print_inorder();
+                tree.print_levelorder();
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },
@@ -258,10 +258,10 @@ fn run_avltree() {
                 println!(" ");
             },
             13 => {
-                // in-order traversal
+                // level-order traversal
                 println!(" ");
                 println!("PRINT OUTPUT ----------------------------------------------- ");
-                tree.print_inorder();
+                tree.print_levelorder();
                 println!("------------------------------------------------------ ");
                 println!(" ");
             },

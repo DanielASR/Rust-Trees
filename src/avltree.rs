@@ -4,6 +4,7 @@ use std::fmt::Debug;
 use std::fmt::Display;
 use std::fmt;
 use std::cmp::max;
+use std::collections::VecDeque;
 
 #[allow(non_snake_case)]
 
@@ -416,6 +417,38 @@ where T: Ord+Display+Debug+Clone+Copy{
             }
         }
         println!("\n");
+    }
+
+    pub fn print_levelorder(&self) {
+        if self.root.is_none() {
+            println!("None");
+            return;
+        };
+        let inorder_nodes = self.inorder();
+        for node in inorder_nodes {
+            print!(" {} ", node.unwrap().borrow().key.clone());
+        }
+        println!("\n");
+    }
+
+    fn inorder(&self) -> VecDeque<Tree<T>> {
+        let root = self.root.as_ref().unwrap().clone();
+        let mut queue: VecDeque<Tree<T>> = VecDeque::new();
+        queue.push_back(Some(root));
+        let mut res: VecDeque<Tree<T>> = VecDeque::new();
+        while !queue.is_empty() {
+            let n = queue.len();
+            for _ in 0..n {
+                let node = queue.pop_front().unwrap().unwrap();
+                res.push_back(Some(node.clone()));
+                for child in [node.borrow().left.clone(), node.borrow().right.clone()] {
+                    if child.is_some() {
+                        queue.push_back(child);
+                    }
+                }
+            }
+        }
+        res
     }
 
     pub fn insert(&mut self,key:T){
